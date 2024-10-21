@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-const createTodoSchema = z.object({
+export const createTodoSchema = z.object({
   id: z.string().uuid().nullable(),
   title: z.string().max(200),
   description: z.string().nullable(),
