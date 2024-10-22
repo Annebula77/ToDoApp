@@ -1,30 +1,34 @@
-import React, { useState } from 'react';
 import { useGetTodosQuery, useUpdateTodoMutation, useDeleteTodoMutation } from '../../store/api/apiSlice';
-import { List, ListItem, ListItemText, IconButton, Checkbox, Typography, CircularProgress, Tab, Tabs } from '@mui/material';
-import { ReceiptText, Trash2 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Tabs, Tab, CircularProgress, Typography } from '@mui/material';
 import { type CreateTodoModel } from '../../models/createRequestSchema';
+import TaskListRender from '../TaskListRender/TaskListRender';
+import { useState } from 'react';
 
-
-const TaskList: React.FC = () => {
+const TaskList = () => {
   const { data: tasks, isLoading, isError } = useGetTodosQuery({});
   const [updateTodo] = useUpdateTodoMutation();
   const [deleteTodo] = useDeleteTodoMutation();
   const [tabValue, setTabValue] = useState(0);
 
   if (isLoading) {
-    return <CircularProgress />;
+    return (
+      <section className='w-full h-screen flex items-center justify-center'>
+        <CircularProgress />
+      </section>
+
+    );
   }
 
   if (isError) {
-    return <Typography color="error">Error loading tasks</Typography>;
+    <section className='w-full h-screen flex items-center justify-center'>
+      return <Typography component='h1' color="error">Error loading tasks</Typography>;
+    </section>
   }
 
   const handleToggleComplete = async (task: CreateTodoModel) => {
     const { id, ...rest } = task;
     await updateTodo({ id, ...rest, isCompleted: !task.isCompleted });
   };
-
 
   const handleDelete = async (id: string) => {
     await deleteTodo(id);
@@ -33,45 +37,14 @@ const TaskList: React.FC = () => {
   const activeTasks = tasks.filter((task: CreateTodoModel) => !task.isCompleted);
   const completedTasks = tasks.filter((task: CreateTodoModel) => task.isCompleted);
 
-  const renderTaskList = (taskList: CreateTodoModel[]) => (
-    <List>
-      {taskList.map((task: CreateTodoModel) => (
-        <ListItem key={task.id} className="mb-2 bg-purple-100 rounded shadow">
-          <Checkbox
-            checked={task.isCompleted}
-            onChange={() => handleToggleComplete(task)}
-          />
-          <ListItemText
-            primary={task.title}
-            secondary={
-              task.dueDate
-                ? `Deadline: ${new Date(task.dueDate).toLocaleDateString()}`
-                : 'No deadline'
-            }
-          />
-          <div className="flex gap-2 pr-4">
-            {/* NOTE: Add page link here */}
-            <IconButton edge="end" aria-label="edit" component={Link} to="/">
-              < ReceiptText color='rgb(153 51 204)' />
-            </IconButton>
-            <IconButton edge="end" aria-label="delete" onClick={() => handleDelete(task.id ?? '')}>
-              <Trash2 color='rgb(153 51 204)' />
-            </IconButton>
-          </div>
-        </ListItem>
-      ))
-      }
-    </List >
-  );
-
   return (
-    <div>
+    <div className='w-full flex flex-col items-center md:items-start'>
       <Tabs value={tabValue} onChange={(_, newValue) => setTabValue(newValue)} className="mb-4">
         <Tab label="Active Tasks" />
         <Tab label="Completed Tasks" />
       </Tabs>
-      {tabValue === 0 && renderTaskList(activeTasks)}
-      {tabValue === 1 && renderTaskList(completedTasks)}
+      {tabValue === 0 && <TaskListRender taskList={activeTasks} handleToggleComplete={handleToggleComplete} handleDelete={handleDelete} />}
+      {tabValue === 1 && <TaskListRender taskList={completedTasks} handleToggleComplete={handleToggleComplete} handleDelete={handleDelete} />}
     </div>
   );
 };

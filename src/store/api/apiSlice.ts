@@ -24,7 +24,7 @@ export const apiSlice = createApi({
     }),
     addTodo: builder.mutation({
       query: (todo) => ({
-        url: '/api/Todos',
+        url: '/api/Todos/',
         method: 'POST',
         body: todo,
       }),

@@ -2,7 +2,7 @@ import { AppBar, Toolbar, Typography, Button } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { ClipboardList } from 'lucide-react';
 import { useState } from 'react';
-import TaskForm from '../TaskForm/TaskForm';
+import TaskFormModal from '../TaskFormModal/TaskFormModal';
 
 const Header: React.FC = () => {
   const [openModal, setOpenModal] = useState(false);
@@ -24,7 +24,7 @@ const Header: React.FC = () => {
           </Button>
         </div>
       </Toolbar>
-      <TaskForm
+      <TaskFormModal
         open={openModal}
         onClose={() => {
           setOpenModal(false);
