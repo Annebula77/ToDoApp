@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
-const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const BASE_URL = '/.netlify/functions/proxy';
 const ACCESS_TOKEN = import.meta.env.VITE_API_TOKEN;
 
 export const apiSlice = createApi({
